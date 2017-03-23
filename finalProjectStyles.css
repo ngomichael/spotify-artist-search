@@ -1,0 +1,129 @@
+body {
+    background-color: #ff8080;
+}
+
+img {
+    margin-top: 70px;
+    border-radius: 3px;
+}
+#label {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+}
+
+#artistSearchContainer {
+    display: flex;
+    justify-content: space-around;
+}
+
+#inputAndButtonContainer {
+    position: absolute;
+    top: 50%;
+    transition-duration: 0.5s;
+}
+
+#artistInfoContainer {
+    font-size: 16px;
+    margin-top: -40px;
+}
+
+#artist {
+    /*Chance height and width and font size after click*/
+    height: 40px;
+    width: 350px;
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 20px;
+    transition-duration: 0.3s;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#artistName {
+    display: inline-block;
+    text-align: center;
+    margin-top: 200px;
+    font-family: 'Open Sans', sans-serif;
+    color: #ffdd99;
+}
+
+#artistInfoContainer {
+    display: flex;
+    margin-top: 2px;
+    justify-content: space-around;
+}
+
+#displayResultsButton {
+    border-radius: 4px;
+    background-color: #99b3ff;
+    border: 2px solid #809fff;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    font-family: 'Open Sans', sans-serif;
+    /*Chance height and width and font sizeafter click*/
+    width: 135px;
+    height: 45px;
+    box-shadow: 0 3px #999;
+    transition-duration: 0.3s;
+}
+
+#displayResultsButton:hover {
+    background-color: #668cff;
+
+}
+
+#displayResultsButton:active {
+    box-shadow: 0 2px #666;
+    transform: translateY(2px);
+}
+
+#topTracks {
+    display: inline-block;
+    color: #ffe6b3;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#relatedArtists {
+    font-family: 'Open Sans', sans-serif;
+    display: inline-block;
+    color: #ffe6b3;
+}
+
+#topTracks span {
+    display: flex;
+    color: #ffffff;
+    transition-duration: 0.2s;
+}
+
+#topTracks span:hover {
+    font-weight: bold;
+    border-style: solid;
+    border-width: 3px;
+    border-color: #809fff;
+}
+
+#relatedArtists span {
+    display: flex;
+    color: #ffffff;
+    justify-content: center;
+    transition-duration: 0.2s;
+}
+
+#relatedArtists span:hover {
+    font-weight: bold;
+    border-style: solid;
+    border-width: 3px;
+    border-color: #809fff;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+.error {
+    color: darkred;
+}
