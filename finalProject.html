@@ -10,7 +10,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Artist's Top Songs</title>
-    <link rel="stylesheet" type="text/css" href="finalStyles.css">
+    <link rel="stylesheet" type="text/css" href="finalProjectStyles.css">
+    <!--<script src="app.js"></script>-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 </head>
@@ -18,7 +19,7 @@
 <body>
 <div id="artistSearchContainer">
     <div id=inputAndButtonContainer>
-        <input id="artist" placeholder="Artist" type="text">
+        <input id="artist" placeholder="Artist" type="text" autofocus>
         <button id="displayResultsButton">Search</button>
     </div>
     <h1 id="artistName">Enter an artist to see their top songs!</h1>
@@ -180,8 +181,8 @@
             otherArtistsElements = null;
 
             //Changes styles of elements on the page
-            inputAndButtonContainer.style.top = '3%';
-            inputAndButtonContainer.style.left = '8%';
+            inputAndButtonContainer.style.top = '12px';
+            inputAndButtonContainer.style.left = '-400px';
             artist.style.height = '20px';
             artist.style.width = '175px';
             artist.style.fontSize = '16px';
@@ -190,7 +191,7 @@
             displayResultsButton.style.width = '95px';
             displayResultsButton.style.fontSize = '16px';
 
-            artistName.style.marginTop = '5px';
+            artistName.style.top = '0px';
 
             //Gets the artist's image and name
             $.getJSON('https://api.spotify.com/v1/search?q=' + $('#artist').val() + '&type=artist', function(result) {

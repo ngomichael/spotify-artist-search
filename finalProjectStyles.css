@@ -4,7 +4,7 @@ body {
 
 img {
     margin-top: 70px;
-    border-radius: 3px;
+    border-radius: 50%;
 }
 #label {
     font-family: 'Open Sans', sans-serif;
@@ -17,8 +17,8 @@ img {
 }
 
 #inputAndButtonContainer {
-    position: absolute;
-    top: 50%;
+    position: relative;
+    top: 300px;
     transition-duration: 0.5s;
 }
 
@@ -42,8 +42,9 @@ img {
 
 #artistName {
     display: inline-block;
+    position: absolute;
     text-align: center;
-    margin-top: 200px;
+    top: 200px;
     font-family: 'Open Sans', sans-serif;
     color: #ffdd99;
 }
