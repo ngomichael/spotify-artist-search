@@ -22,11 +22,6 @@ img {
     transition-duration: 0.5s;
 }
 
-#artistInfoContainer {
-    font-size: 16px;
-    margin-top: -40px;
-}
-
 #artist {
     /*Chance height and width and font size after click*/
     height: 40px;
@@ -51,7 +46,7 @@ img {
 
 #artistInfoContainer {
     display: flex;
-    margin-top: 2px;
+    margin-top: 55px;
     justify-content: space-around;
 }
 
