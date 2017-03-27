@@ -26,6 +26,8 @@ img {
     /*Chance height and width and font size after click*/
     height: 40px;
     width: 350px;
+    border-radius: 4px;
+    border-style: none;
     padding-left: 15px;
     padding-right: 5px;
     padding-top: 5px;
@@ -46,7 +48,7 @@ img {
 
 #artistInfoContainer {
     display: flex;
-    margin-top: 55px;
+    margin-top: 20px;
     justify-content: space-around;
 }
 
@@ -114,12 +116,4 @@ img {
     border-width: 3px;
     border-color: #809fff;
     cursor: pointer;
-}
-
-.hidden {
-    display: none;
-}
-
-.error {
-    color: darkred;
 }
