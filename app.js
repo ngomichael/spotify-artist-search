@@ -5,6 +5,42 @@ $(document).ready(function() {
     var topTracks = [];
     var trackPreviews = [];
     var searchedArtists = [];
+    var uniqueNames = [];
+
+    $('#artist').keyup(function() {
+        var inputVal = $('#artist').val();
+        $.getJSON('https://api.spotify.com/v1/search?q=' + inputVal + '&type=artist', function (result) {
+            var counter = 1;
+            $.each(result, function (index, item) {
+                $.each(item.items, function (index, artist) {
+                    if (counter > 5) {
+                        return;
+                    }
+                    searchedArtists.push(artist.name);
+                    //Updates the searchedArtists array based on what is typed into the input
+                    for(var i = 0; i < searchedArtists.length; i++) {
+                        console.log(searchedArtists);
+                        if(searchedArtists[i].includes($('#artist').val())) {
+                            searchedArtists.splice(i, 1);
+                        }
+                    }
+                    autocompleteInput();
+                    counter++;
+                });
+                console.log(searchedArtists);
+            });
+        });
+        uniqueNames = [];
+
+    });
+    function autocompleteInput() {
+        $("#artist").autocomplete({
+            source: function(request, response) {
+                var results = $.ui.autocomplete.filter(searchedArtists, request.term);
+                response(results.slice(0, 5));
+            }
+        });
+    }
 
     //Creates an audio element and plays it
     function playMusic(url) {
@@ -45,6 +81,7 @@ $(document).ready(function() {
         var key = e.which;
         if (key == 13) {
             $('#displayResultsButton').click();
+            $( "#artist" ).autocomplete( "close" );
         }
     });
 
@@ -75,6 +112,7 @@ $(document).ready(function() {
 
         //Gets the artist's image and name
         $.getJSON('https://api.spotify.com/v1/search?q=' + inputValue + '&type=artist', function (result) {
+            var counter = 1;
             var artistId = result.artists.items[0].id;
             $.each(result, function (index, item) {
                 $('#artistName').append(item.items[0].name);
