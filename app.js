@@ -4,42 +4,18 @@ $(document).ready(function() {
     var otherArtistsElements = null;
     var topTracks = [];
     var trackPreviews = [];
-    var uniqueNames = [];
 
+    $('.suggestion').click(function () {
+       var clickedArtist = $(this).html();
+       $('#artist').val(clickedArtist);
+       $('#autocompleteContainer').hide();
+       $('#displayResultsButton').click();
 
+    });
 
-
-
-
-
-
-    // var practiceArr = [];
-    // practiceArr.push('drake');
-    // practiceArr.push('khalid');
-    // practiceArr.push('kyle');
-    // console.log(practiceArr);
-
-
-    // function checkArtist(artist) {
-    //     if(artist.includes($('#artist').val())) {
-    //         uniqueNames.push(artist);
-    //         return artist;
-    //     }
-    // }
-    //
-    // function filterArray() {
-    //     var filtered = searchedArtists.filter(checkArtist);
-    //     return filtered;
-    // }
-    //
-    //
-    // function remove(index) {
-    //     if(!searchedArtists[index].includes($('#artist').val())) {
-    //         searchedArtists.splice(index, 1);
-    //     }
-    // }
 
     $('#artist').keyup(function() {
+        $('#autocompleteContainer').show();
         var count = 1;
         var inputVal = $('#artist').val();
         var searchedArtists = [];
@@ -54,21 +30,7 @@ $(document).ready(function() {
                 });
             });
             autocompleteInput(searchedArtists);
-            //Remove elements that don't have the input in their name
-            // filterArray();
-            // searchedArtists = uniqueNames;
-            // console.log(uniqueNames);
-            // autocompleteInput();
-            console.log(searchedArtists);
         });
-        //Removes duplicates from the arraay
-        // $.each(searchedArtists, function(i, el){
-        //     if($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
-        // });
-
-        // console.log(searchedArtists.length);
-        // uniqueNames = [];
-
     });
 
     function autocompleteInput(searchedArtists) {
@@ -76,21 +38,28 @@ $(document).ready(function() {
             $('#option' + i).html(searchedArtists[i]);
         }
 
-        if($('#artist').val() === '') {
-            console.log('hi');
-            $('#autocompleteContainer').hide();
-        }
+        // if($('#artist').val() === '') {
+        //     console.log('hi');
+        //     $('#autocompleteContainer').hide();
+        // }
     }
 
-    // $("#artist").autocomplete({
-    //     //Limits the number of artist shown to 5
-    //     source: function(request, response) {
-    //         var results = $.ui.autocomplete.filter(searchedArtists, request.term);
-    //         response(results.slice(0, 5));
+    //Press enter it clicks the search button
+    $('#artist').keypress(function (e) {
+        var key = e.which;
+        if (key == 13) {
+            $('#displayResultsButton').click();
+            $('#artist').blur();
+        }
+    });
+
+    //Choose suggestion using arrow keys
+    // $('#artist').keypress(function (e) {
+    //     var key = e.which;
+    //     if (key == 40) {
+    //
     //     }
     // });
-
-
 
     //Creates an audio element and plays it
     function playMusic(url) {
@@ -126,17 +95,9 @@ $(document).ready(function() {
         });
     }
 
-    //Press enter it clicks the search button
-    $('#artist').keypress(function (e) {
-        var key = e.which;
-        if (key == 13) {
-            $('#displayResultsButton').click();
-            // $( "#artist" ).autocomplete( "close" );
-        }
-    });
-
     //Displays the artist's top ten songs, image, name, and related artists on the page when called
     function displayInformation(inputValue) {
+        $('#autocompleteContainer').hide();
         //Clears the page
         $('#artistName').html(" ");
         $('#topTracks').html(" ");
@@ -153,6 +114,8 @@ $(document).ready(function() {
         artist.style.height = '20px';
         artist.style.width = '175px';
         artist.style.fontSize = '16px';
+
+        autocompleteContainer.style.width = '175px';
 
         displayResultsButton.style.height = '29px';
         displayResultsButton.style.width = '95px';
@@ -226,6 +189,7 @@ $(document).ready(function() {
         $('#displayResultsButton').click(function () {
             var inputValue = $('#artist').val();
             displayInformation(inputValue);
+            $('#artist').blur();
         });
     }
     catch (exception) {
