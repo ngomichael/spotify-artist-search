@@ -4,43 +4,93 @@ $(document).ready(function() {
     var otherArtistsElements = null;
     var topTracks = [];
     var trackPreviews = [];
-    var searchedArtists = [];
     var uniqueNames = [];
 
+
+
+
+
+
+
+
+    // var practiceArr = [];
+    // practiceArr.push('drake');
+    // practiceArr.push('khalid');
+    // practiceArr.push('kyle');
+    // console.log(practiceArr);
+
+
+    // function checkArtist(artist) {
+    //     if(artist.includes($('#artist').val())) {
+    //         uniqueNames.push(artist);
+    //         return artist;
+    //     }
+    // }
+    //
+    // function filterArray() {
+    //     var filtered = searchedArtists.filter(checkArtist);
+    //     return filtered;
+    // }
+    //
+    //
+    // function remove(index) {
+    //     if(!searchedArtists[index].includes($('#artist').val())) {
+    //         searchedArtists.splice(index, 1);
+    //     }
+    // }
+
     $('#artist').keyup(function() {
+        var count = 1;
         var inputVal = $('#artist').val();
+        var searchedArtists = [];
         $.getJSON('https://api.spotify.com/v1/search?q=' + inputVal + '&type=artist', function (result) {
-            var counter = 1;
             $.each(result, function (index, item) {
                 $.each(item.items, function (index, artist) {
-                    if (counter > 5) {
+                    if(count > 5) {
                         return;
                     }
                     searchedArtists.push(artist.name);
-                    //Updates the searchedArtists array based on what is typed into the input
-                    for(var i = 0; i < searchedArtists.length; i++) {
-                        console.log(searchedArtists);
-                        if(searchedArtists[i].includes($('#artist').val())) {
-                            searchedArtists.splice(i, 1);
-                        }
-                    }
-                    autocompleteInput();
-                    counter++;
+                    count++;
                 });
-                console.log(searchedArtists);
             });
+            autocompleteInput(searchedArtists);
+            //Remove elements that don't have the input in their name
+            // filterArray();
+            // searchedArtists = uniqueNames;
+            // console.log(uniqueNames);
+            // autocompleteInput();
+            console.log(searchedArtists);
         });
-        uniqueNames = [];
+        //Removes duplicates from the arraay
+        // $.each(searchedArtists, function(i, el){
+        //     if($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
+        // });
+
+        // console.log(searchedArtists.length);
+        // uniqueNames = [];
 
     });
-    function autocompleteInput() {
-        $("#artist").autocomplete({
-            source: function(request, response) {
-                var results = $.ui.autocomplete.filter(searchedArtists, request.term);
-                response(results.slice(0, 5));
-            }
-        });
+
+    function autocompleteInput(searchedArtists) {
+        for(var i = 1; i <= 5; i++) {
+            $('#option' + i).html(searchedArtists[i]);
+        }
+
+        if($('#artist').val() === '') {
+            console.log('hi');
+            $('#autocompleteContainer').hide();
+        }
     }
+
+    // $("#artist").autocomplete({
+    //     //Limits the number of artist shown to 5
+    //     source: function(request, response) {
+    //         var results = $.ui.autocomplete.filter(searchedArtists, request.term);
+    //         response(results.slice(0, 5));
+    //     }
+    // });
+
+
 
     //Creates an audio element and plays it
     function playMusic(url) {
@@ -81,7 +131,7 @@ $(document).ready(function() {
         var key = e.which;
         if (key == 13) {
             $('#displayResultsButton').click();
-            $( "#artist" ).autocomplete( "close" );
+            // $( "#artist" ).autocomplete( "close" );
         }
     });
 
@@ -179,6 +229,6 @@ $(document).ready(function() {
         });
     }
     catch (exception) {
-        $('#error').append("Sorry, there was an error");
+        $('#error').append('Sorry, there was an error');
     }
 });

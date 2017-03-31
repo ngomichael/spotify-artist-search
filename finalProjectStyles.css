@@ -117,3 +117,20 @@ img {
     border-color: #809fff;
     cursor: pointer;
 }
+
+.option {
+    height: 25px;
+    width:50px;
+}
+
+#autocompleteContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 15px;
+    padding-right: 5px;
+    /*padding-top: 5px;*/
+    /*padding-bottom: 5px;*/
+    font-size: 20px;
+    background-color: white;
+}
