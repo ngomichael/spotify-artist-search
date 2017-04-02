@@ -3,63 +3,91 @@ $(document).ready(function() {
     var trackElements = null;
     var otherArtistsElements = null;
     var topTracks = [];
-    var trackPreviews = [];
+    var trackPreviews = []
+    var count = 0;
 
     $('.suggestion').click(function () {
        var clickedArtist = $(this).html();
-       $('#artist').val(clickedArtist);
+       $('#input').val(clickedArtist);
        $('#autocompleteContainer').hide();
        $('#displayResultsButton').click();
 
     });
 
-
-    $('#artist').keyup(function() {
+    $('#input').keyup(function() {
         $('#autocompleteContainer').show();
-        var count = 1;
-        var inputVal = $('#artist').val();
-        var searchedArtists = [];
-        $.getJSON('https://api.spotify.com/v1/search?q=' + inputVal + '&type=artist', function (result) {
-            $.each(result, function (index, item) {
-                $.each(item.items, function (index, artist) {
-                    if(count > 5) {
-                        return;
-                    }
-                    searchedArtists.push(artist.name);
-                    count++;
+        var count = 0;
+        var inputVal = $('#input').val();
+        if(inputVal === '') {
+            $('#autocompleteContainer').hide();
+        }
+        else {
+            var searchedArtists = [];
+            $.getJSON('https://api.spotify.com/v1/search?q=' + inputVal + '&type=artist', function (result) {
+                $.each(result, function (index, item) {
+                    $.each(item.items, function (index, artist) {
+                        if(count > 4) {
+                            return;
+                        }
+                        searchedArtists.push(artist.name);
+                        count++;
+                    });
                 });
+                autocompleteInput(searchedArtists);
             });
-            autocompleteInput(searchedArtists);
-        });
+        }
     });
 
     function autocompleteInput(searchedArtists) {
-        for(var i = 1; i <= 5; i++) {
+        for(var i = 0; i < 5; i++) {
             $('#option' + i).html(searchedArtists[i]);
         }
-
-        // if($('#artist').val() === '') {
-        //     console.log('hi');
-        //     $('#autocompleteContainer').hide();
-        // }
     }
 
     //Press enter it clicks the search button
-    $('#artist').keypress(function (e) {
+    $('#input').keydown(function (e) {
         var key = e.which;
+        if(count > 5) {
+            count = 0;
+        }
+
+        if(count < 0) {
+            count = 5;
+        }
+
         if (key == 13) {
             $('#displayResultsButton').click();
-            $('#artist').blur();
+            $('#input').blur();
+        }
+
+        //Down
+        if (key == 40) {
+            if(count === 0) {
+                $('#option' + count).css("background-color","#809fff");
+                $('#option' + count).css("border-radius","2px");
+            }
+            else {
+                $('#option' + count).css("background-color","#809fff");
+                $('#option' + count).css("border-radius","2px");
+                $('#option' + (count - 1)).css("background-color", 'white');
+            }
+            count++;
+        }
+
+        //Up
+        if (key == 38) {
+            count--;
+            if(count === 4) {
+                $('#option' + (count)).css("background-color","#809fff");
+                $('#option' + count).css("border-radius","2px");
+            }
+            else {
+                $('#option' + (count)).css("background-color","#809fff");
+                $('#option' + count).css("border-radius","2px");
+                $('#option' + (count + 1)).css("background-color","white");
+            }
         }
     });
-
-    //Choose suggestion using arrow keys
-    // $('#artist').keypress(function (e) {
-    //     var key = e.which;
-    //     if (key == 40) {
-    //
-    //     }
-    // });
 
     //Creates an audio element and plays it
     function playMusic(url) {
@@ -111,9 +139,9 @@ $(document).ready(function() {
         //Changes styles of elements on the page
         inputAndButtonContainer.style.top = '22px';
         inputAndButtonContainer.style.left = '-32%';
-        artist.style.height = '20px';
-        artist.style.width = '175px';
-        artist.style.fontSize = '16px';
+        input.style.height = '20px';
+        input.style.width = '175px';
+        input.style.fontSize = '16px';
 
         autocompleteContainer.style.width = '175px';
 
@@ -187,9 +215,9 @@ $(document).ready(function() {
 
     try {
         $('#displayResultsButton').click(function () {
-            var inputValue = $('#artist').val();
+            var inputValue = $('#input').val();
             displayInformation(inputValue);
-            $('#artist').blur();
+            $('#input').blur();
         });
     }
     catch (exception) {

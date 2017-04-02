@@ -22,8 +22,7 @@ img {
     transition-duration: 0.5s;
 }
 
-#artist {
-    /*Chance height and width and font size after click*/
+#input {
     height: 40px;
     width: 350px;
     border-radius: 4px;
@@ -131,14 +130,8 @@ img {
     margin-top: 5px;
     padding-left: 15px;
     padding-right: 5px;
-    /*padding-top: 5px;*/
-    /*padding-bottom: 5px;*/
     width: 350px;
     font-size: 20px;
     border-radius: 4px;
     background-color: white;
-}
-
-.selected {
-
 }
