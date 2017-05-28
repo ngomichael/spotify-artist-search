@@ -117,6 +117,12 @@ img {
     cursor: pointer;
 }
 
+.suggestion {
+    width: 102%;
+    margin-left: -15px;
+    padding-left: 15px;
+}
+
 .suggestion:hover {
     font-weight: bold;
     /*background-color: #668cff;*/
@@ -124,6 +130,7 @@ img {
 }
 
 #autocompleteContainer {
+    position: absolute;
     display: flex;
     flex-direction: column;
     justify-content: center;

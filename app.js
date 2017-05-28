@@ -5,7 +5,23 @@ $(document).ready(function() {
     var topTracks = [];
     var trackPreviews = []
     var count = 0;
+    $("#displayResultsButton").prop("disabled",true);
+    // console.log($("#displayResultsButton").prop('disabled'));
+    // console.log($('#input').val() + 'hilasdf');
 
+
+    // var input = $('#input'); //sets focus to element
+    // input.focus();
+    // var val = this.input.value; //store the value of the element
+    // this.input.value = ''; //clear the value of the element
+    // this.input.value = val; //set that value back.
+
+    /*
+    When an option is clicked from the autocomplete div
+    the value in the input is set to the clicked element
+    and all of the options become hidden and the displayResultsButton
+    gets clicked.
+     */
     $('.suggestion').click(function () {
        var clickedArtist = $(this).html();
        $('#input').val(clickedArtist);
@@ -14,30 +30,55 @@ $(document).ready(function() {
 
     });
 
-    $('#input').keyup(function() {
+    //Hides autocomplete divs on blur
+    $('#input').blur(function() {
+        $('#autocompleteContainer').hide();
+    });
+
+    /*
+     With each keyup in the input, the options for autocomplete are shown
+     count is set to 0
+     */
+    $('#input').keyup(function(e) {
+        var key = e.which;
         $('#autocompleteContainer').show();
         var count = 0;
         var inputVal = $('#input').val();
+
+        //If the inputVal is empty then the options for autocomplete are hidden
         if(inputVal === '') {
+            $("#displayResultsButton").prop("disabled", true);
             $('#autocompleteContainer').hide();
         }
+
+        //Else the searchedArtists array is set to empty and the there is an api call using the inputVal
         else {
             var searchedArtists = [];
-            $.getJSON('https://api.spotify.com/v1/search?q=' + inputVal + '&type=artist', function (result) {
-                $.each(result, function (index, item) {
-                    $.each(item.items, function (index, artist) {
-                        if(count > 4) {
-                            return;
-                        }
-                        searchedArtists.push(artist.name);
-                        count++;
+            $("#displayResultsButton").prop("disabled", false);
+
+            if(key === 40 || key === 38) {
+                return;
+            }
+            else {
+                //Takes the input value and gets a JSon file and parses through it to get the top 5 names
+                $.getJSON('https://api.spotify.com/v1/search?q=' + inputVal + '&type=artist', function (result) {
+                    $.each(result, function (index, item) {
+                        $.each(item.items, function (index, artist) {
+                            if(count > 4) {
+                                return;
+                            }
+                            searchedArtists.push(artist.name);
+                            count++;
+                        });
                     });
+                    autocompleteInput(searchedArtists);
                 });
-                autocompleteInput(searchedArtists);
-            });
+            }
         }
     });
 
+    //When this function is called the divs' HTML are replaced
+    //with the searchedArtists elements
     function autocompleteInput(searchedArtists) {
         for(var i = 0; i < 5; i++) {
             $('#option' + i).html(searchedArtists[i]);
@@ -47,26 +88,55 @@ $(document).ready(function() {
     //Press enter it clicks the search button
     $('#input').keydown(function (e) {
         var key = e.which;
-        if(count > 5) {
-            count = 0;
-        }
 
-        if(count < 0) {
+        if(count > 4) {
+            count = -1;
+            $('#option' + '4').css("background-color", 'white');
+        }
+        else if(count < 0) {
             count = 5;
+            $('#option' + '0').css("background-color", 'white');
         }
 
+        if($('input').val() === '') {
+            count = 0;
+            for(var i = 0; i < 5; i++) {
+                $('#option' + i).css("background-color", 'white');
+            }
+        }
+        //Enter key
         if (key == 13) {
-            $('#displayResultsButton').click();
-            $('#input').blur();
+            count = 0;
+            for(var i = 0; i < 5; i++) {
+                $('#option' + i).css("background-color", 'white');
+            }
+            $('#option' + count).css("background-color", 'white');
+
+            // console.log($("#displayResultsButton").prop('disabled'));
+            // console.log(($('#input').val()));
+
+            if($('#input').val() === '') {
+                // console.log('this is wrong');
+                $("#displayResultsButton").prop("disabled",true);
+            }
+            else if($("#displayResultsButton").prop('disabled') === true) {
+                return;
+            }
+            else {
+                $('#displayResultsButton').click();
+                $('#input').blur();
+            }
         }
 
         //Down
-        if (key == 40) {
+        else if (key == 40) {
             if(count === 0) {
+                $('#input').val($('#option' + count).html());
                 $('#option' + count).css("background-color","#809fff");
                 $('#option' + count).css("border-radius","2px");
             }
             else {
+                $('#input').val($('#option' + count).html());
                 $('#option' + count).css("background-color","#809fff");
                 $('#option' + count).css("border-radius","2px");
                 $('#option' + (count - 1)).css("background-color", 'white');
@@ -75,13 +145,15 @@ $(document).ready(function() {
         }
 
         //Up
-        if (key == 38) {
+        else if (key == 38) {
             count--;
             if(count === 4) {
+                $('#input').val($('#option' + count).html());
                 $('#option' + (count)).css("background-color","#809fff");
                 $('#option' + count).css("border-radius","2px");
             }
             else {
+                $('#input').val($('#option' + count).html());
                 $('#option' + (count)).css("background-color","#809fff");
                 $('#option' + count).css("border-radius","2px");
                 $('#option' + (count + 1)).css("background-color","white");
