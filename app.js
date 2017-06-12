@@ -1,20 +1,26 @@
 $(document).ready(function() {
+
+    var client_id = 'a7f97cce8bc148568b050bde1fc86020';
+    var client_secret = 'fdf579aefac941de8c82691b4567661b';
+
     var currentlyPlayingTrack = null;
     var trackElements = null;
     var otherArtistsElements = null;
     var topTracks = [];
     var trackPreviews = []
     var count = 0;
+    var accessToken;
     $("#displayResultsButton").prop("disabled",true);
-    // console.log($("#displayResultsButton").prop('disabled'));
-    // console.log($('#input').val() + 'hilasdf');
 
-
-    // var input = $('#input'); //sets focus to element
-    // input.focus();
-    // var val = this.input.value; //store the value of the element
-    // this.input.value = ''; //clear the value of the element
-    // this.input.value = val; //set that value back.
+    if (window.location.hash) {
+        accessToken = window.location.hash.split('=')[1].split('&')[0];
+    } else {
+        window.location.href = 'https://accounts.spotify.com/authorize?' + $.param({
+                client_id: 'a7f97cce8bc148568b050bde1fc86020',
+                response_type: 'token',
+                redirect_uri: 'http://localhost:63342/spotify-artist-search/'
+            });
+    }
 
     /*
     When an option is clicked from the autocomplete div
@@ -61,17 +67,25 @@ $(document).ready(function() {
             }
             else {
                 //Takes the input value and gets a JSon file and parses through it to get the top 5 names
-                $.getJSON('https://api.spotify.com/v1/search?q=' + inputVal + '&type=artist', function (result) {
-                    $.each(result, function (index, item) {
-                        $.each(item.items, function (index, artist) {
-                            if(count > 4) {
-                                return;
-                            }
-                            searchedArtists.push(artist.name);
-                            count++;
+                $.ajax({
+                    type: 'GET',
+                    url: 'https://api.spotify.com/v1/search?q=' + inputVal + '&type=artist',
+                    headers: {
+                        Authorization:'Bearer ' + accessToken,
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        $.each(result, function (index, item) {
+                            $.each(item.items, function (index, artist) {
+                                if(count > 4) {
+                                    return;
+                                }
+                                searchedArtists.push(artist.name);
+                                count++;
+                            });
                         });
-                    });
-                    autocompleteInput(searchedArtists);
+                        autocompleteInput(searchedArtists);
+                    }
                 });
             }
         }
@@ -224,64 +238,88 @@ $(document).ready(function() {
         artistName.style.top = '0px';
 
         //Gets the artist's image and name
-        $.getJSON('https://api.spotify.com/v1/search?q=' + inputValue + '&type=artist', function (result) {
-            var counter = 1;
-            var artistId = result.artists.items[0].id;
-            $.each(result, function (index, item) {
-                $('#artistName').append(item.items[0].name);
-                $('#artistImg').attr('src', item.items[0].images[0].url);
-                $('#topTracks').append('<h2>' + item.items[0].name + "'s Top 10 Tracks!" + '</h2>');
-            });
-
-            //Gets the top ten tracks from an artist and displays it on the page
-            $.getJSON('https://api.spotify.com/v1/artists/' + artistId + '/top-tracks?country=US', function (result) {
+        $.ajax({
+            type: 'GET',
+            url: 'https://api.spotify.com/v1/search?q=' + inputValue + '&type=artist',
+            headers: {
+                Authorization:'Bearer ' + accessToken,
+            },
+            dataType: 'json',
+            success: function (result) {
                 var counter = 1;
+                var artistId = result.artists.items[0].id;
                 $.each(result, function (index, item) {
-                    $.each(item, function (index, track) {
-                        var musicTrack = track.preview_url;
-                        var trackName = track.name;
-                        $('#topTracks').append("<span>" + counter + ': ' + trackName + "</span>" + "<br>");
-                        topTracks.push(trackName);
-                        trackPreviews.push(musicTrack);
-                        counter++;
-                    });
+                    $('#artistName').append(item.items[0].name);
+                    $('#artistImg').attr('src', item.items[0].images[0].url);
+                    $('#topTracks').append('<h2>' + item.items[0].name + "'s Top 10 Tracks!" + '</h2>');
                 });
 
-                $('#topTracks span').addClass('tracks');
-                var tracks = document.getElementsByClassName('tracks');
-                trackElements = tracks;
+                //Gets the top ten tracks from an artist and displays it on the page
+                $.ajax({
+                    type: 'GET',
+                    url: 'https://api.spotify.com/v1/artists/' + artistId + '/top-tracks?country=US',
+                    headers: {
+                        Authorization:'Bearer ' + accessToken,
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        var counter = 1;
+                        $.each(result, function (index, item) {
+                            $.each(item, function (index, track) {
+                                var musicTrack = track.preview_url;
+                                var trackName = track.name;
+                                $('#topTracks').append("<span>" + counter + ': ' + trackName + "</span>" + "<br>");
+                                topTracks.push(trackName);
+                                trackPreviews.push(musicTrack);
+                                counter++;
+                            });
+                        });
 
-                //Passes i to addMouseOver and addMouseOut functions
-                for (var i = 0; i < tracks.length; i++) {
-                    addMouseOver(i);
-                    addMouseOut(i);
-                }
-            });
+                        $('#topTracks span').addClass('tracks');
+                        var tracks = document.getElementsByClassName('tracks');
+                        trackElements = tracks;
 
-            //Gets an artist's top 5 related artist's and displays it on the page.
-            $.getJSON('https://api.spotify.com/v1/artists/' + artistId + '/related-artists', function (result) {
-                var counter = 0;
-                $('#relatedArtists').append('<h2> Related Artists </h2>');
-                $.each(result, function (index, item) {
-                    $.each(item, function (index, artist) {
-                        if (counter >= 5) {
-                            return;
+                        //Passes i to addMouseOver and addMouseOut functions
+                        for (var i = 0; i < tracks.length; i++) {
+                            addMouseOver(i);
+                            addMouseOut(i);
                         }
-                        var relatedArtist = artist.name;
-                        $('#relatedArtists').append("<span>" + relatedArtist + "</span>" + "<br>");
-                        counter++;
-                    });
+                    }
                 });
 
-                $('#relatedArtists span').addClass('otherArtists');
-                var otherArtists = document.getElementsByClassName('otherArtists');
-                otherArtistsElements = otherArtists;
+                //Gets an artist's top 5 related artist's and displays it on the page.
+                $.ajax({
+                    type: 'GET',
+                    url: 'https://api.spotify.com/v1/artists/' + artistId + '/related-artists',
+                    headers: {
+                        Authorization: 'Bearer ' + accessToken,
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        var counter = 0;
+                        $('#relatedArtists').append('<h2> Related Artists </h2>');
+                        $.each(result, function (index, item) {
+                            $.each(item, function (index, artist) {
+                                if (counter >= 5) {
+                                    return;
+                                }
+                                var relatedArtist = artist.name;
+                                $('#relatedArtists').append("<span>" + relatedArtist + "</span>" + "<br>");
+                                counter++;
+                            });
+                        });
 
-                //Loops through and passes j to the addClick function
-                for (var j = 0; j < otherArtistsElements.length; j++) {
-                    addClick(j);
-                }
-            });
+                        $('#relatedArtists span').addClass('otherArtists');
+                        var otherArtists = document.getElementsByClassName('otherArtists');
+                        otherArtistsElements = otherArtists;
+
+                        //Loops through and passes j to the addClick function
+                        for (var j = 0; j < otherArtistsElements.length; j++) {
+                            addClick(j);
+                        }
+                    }
+                });
+            }
         });
     }
 
