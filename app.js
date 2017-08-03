@@ -29,15 +29,10 @@ $(document).ready(function() {
     gets clicked.
      */
     $('.suggestion').click(function () {
-       var clickedArtist = $(this).html();
-       $('#input').val(clickedArtist);
-       $('#autocompleteContainer').hide();
-       $('#displayResultsButton').click();
-
-    });
-
-    //Hides autocomplete divs on blur
-    $('#input').blur(function() {
+        console.log('hey');
+        $('#displayResultsButton').click();
+        var clickedArtist = $(this).html();
+        $('#input').val(clickedArtist);
         $('#autocompleteContainer').hide();
     });
 
